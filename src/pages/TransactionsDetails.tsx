@@ -215,21 +215,20 @@ const Transactions = () => {
   );
 };
 
-const FormInput = ({ label, name, value, onChange, disabled = false }) => (
+const FormInput = ({ label, name, value, onChange, disabled = false }: { label: string, name: string, value: string |number| any, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, disabled?: boolean }) => (
   <div>
     <label className="text-sm text-gray-500">{label}</label>
     <input
       type="text"
       name={name}
-      value={value || ""}
+      value={value}
       onChange={onChange}
       disabled={disabled}
       className="w-full p-2 border border-gray-300 rounded mt-1"
     />
   </div>
 );
-
-const DetailItem = ({ label, value, status = false }) => (
+const DetailItem = ({ label, value, status = false }: { label: string, value: any, status?: boolean }) => (
   <div>
     <p className="text-sm text-gray-500">{label}</p>
     <p
@@ -245,5 +244,4 @@ const DetailItem = ({ label, value, status = false }) => (
     </p>
   </div>
 );
-
 export default Transactions;
