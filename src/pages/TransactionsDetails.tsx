@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import useFetchApi from "../hooks/useFetchApi";
-import { Transaction } from "../components/transactions/transaction.types";
+import { Transaction, Status, TransactionType } from "../components/transactions/transaction.types";
 
 const Transactions = () => {
   const params = useParams();
@@ -9,7 +9,24 @@ const Transactions = () => {
   const location = useLocation();
   const { data: transaction, fetchData } = useFetchApi<Transaction>();
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState<Transaction | null>(null);
+  const [formData, setFormData] = useState<Transaction>({
+    id: "",
+    portfolio_id: 0,
+    instrument_id: 0,
+    status: Status.Settled,
+    comments: "",
+    quantity: 0,
+    price: 0,
+    transaction_costs: 0,
+    trade_date: new Date(),
+    fx_rate: "0",
+    price_uses_market_data: 0,
+    settlement_date: new Date(),
+    transaction_type: TransactionType.Buy,
+    sale_method: "",
+    portfolio: "",
+    total_amount: 0,
+  });
 
   const fetchTransaction = useCallback(async () => {
     console.log("Fetching transaction for ID:", params.id);
@@ -31,8 +48,7 @@ const Transactions = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // Handle numeric fields
-    const numericFields = ["quantity", "price", "total_amount", "fx_rate"];
+    const numericFields = ["quantity", "price", "total_amount", "transaction_costs", "price_uses_market_data"];
     const updatedValue = numericFields.includes(name)
       ? parseFloat(value)
       : value;
@@ -55,7 +71,7 @@ const Transactions = () => {
     }
   }, [location.state]);
 
-  if (!transaction || !formData) {
+  if (!transaction) {
     return (
       <p className="text-red-500 text-center mt-10">Loading transaction...</p>
     );
@@ -219,7 +235,7 @@ const DetailItem = ({ label, value, status = false }) => (
     <p
       className={`text-lg ${
         status
-          ? value === "SETTLED"
+          ? value === Status.Settled
             ? "text-green-600"
             : "text-yellow-600"
           : "text-gray-900"
